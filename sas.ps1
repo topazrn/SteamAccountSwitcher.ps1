@@ -14,5 +14,8 @@ Get-Content $steam_path"\config\loginusers.vdf" | Select-String AccountName | Fo
   }
 }
 
-$current_user = Get-ItemProperty -Path $current_user_reg | Select-Object -ExpandProperty AutoLoginUser
-Write-Output $current_user
+# Set Current User
+$current_user = Read-Host -Prompt "Switch to account"
+$silent = taskkill.exe /F /IM "steam.exe"
+Set-ItemProperty -Path $current_user_reg -Name AutoLoginUser -Value $current_user
+Start-Process -FilePath $steam_path"\steam.exe"
