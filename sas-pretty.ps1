@@ -9,11 +9,17 @@ $steam_path = Get-ItemProperty -Path $steam_path_reg | Select-Object -ExpandProp
 $users = Get-Content $steam_path"\config\loginusers.vdf" | Select-String AccountName | ForEach-Object {
   $_.ToString().Replace('"AccountName"', '').Trim().Trim('"')
 }
+$new_login = "[New login]"
+$users += $new_login
 
 # Set Current User
 Write-Output "Switch to: "
 $current_user = gum.exe choose $users | Select-Object -Skip 1
 if ($current_user -ne "") {
+  if ($current_user -eq $new_login) {
+    $current_user = ""
+  }
+  
   $silent = taskkill.exe /F /IM "steam.exe"
   Set-ItemProperty -Path $current_user_reg -Name AutoLoginUser -Value $current_user
   Start-Process -FilePath $steam_path"\steam.exe"
